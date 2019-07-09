@@ -1,0 +1,19 @@
+/////////// BEGIN EDITABLE //////////////
+private static Node toOutline(List<Heading> headings) {
+	// Implement this function. Sample code below builds an
+	// outline of only the first heading.
+
+	Node root = new Node(new Heading(0, ""));
+	
+	// Map of Nodes with their Node levels as keys. 
+	Map<Integer, Node> mapOfNodeLevels = new HashMap<Integer, Node>();
+	
+	mapOfNodeLevels.put(0, root);
+	for (Heading heading : headings) {
+		Node node = new Node(heading);
+		mapOfNodeLevels.get(heading.weight - 1).children.add(node);
+		mapOfNodeLevels.put(heading.weight, node);
+	}
+	return root;
+}
+/////////// END EDITABLE //////////////
