@@ -64,33 +64,67 @@ public class EverChangingOrgApplicationTests {
 		oneLevelUpMapCopy = buildtargetMap();
 
 		System.out.println("Temporary staging map with 1 level hierarchy:" + oneLevelUpMap);
-
-//		for (int i = 0; i < oneLevelUpMap.size(); i++) {
+		
+		
+		
+		do {
+			
 			for (Map.Entry<String, List<String>> entry : oneLevelUpMap.entrySet()) {
+				
+				if((oneLevelUpMapCopy.containsKey(entry.getKey()))) {
+					boolean hasSup = doesSupervisorHaveSupervisor(entry.getKey(), oneLevelUpMapCopy);
 
-				boolean hasSup = doesSupervisorHaveSupervisor(entry.getKey(), oneLevelUpMapCopy);
+					System.out.println("***Does " + entry.getKey() + " have supervisor?: " + hasSup);
 
-				System.out.println("***Does " + entry.getKey() + " have supervisor?: " + hasSup);
+					if (!hasSup) {
 
-				if (!hasSup) {
+						Employee emp = new Employee(entry.getKey());
 
-					Employee emp = new Employee(entry.getKey());
+						for (String sub : oneLevelUpMap.get(entry.getKey())) {
+							emp.getList().add(new Employee(sub));
+						}
+						orderedEmployeeList.add(emp);
+						oneLevelUpMapCopy.remove(entry.getKey());
 
-					for (String sub : oneLevelUpMap.get(entry.getKey())) {
-						emp.getList().add(new Employee(sub));
 					}
-					orderedEmployeeList.add(emp);
-					oneLevelUpMapCopy.remove(entry.getKey());
-
 				}
+
+				
 
 				System.out.println("Updated map now: " + oneLevelUpMapCopy);
 			}
-//		}
+			
+		}while(oneLevelUpMapCopy.size()!=0);
+		
+
+		
 
 		System.out.println("Ordered Employee List:" + orderedEmployeeList);
-		System.out.println(oneLevelUpMapCopy.size() +" was the first level list size. Vs. the ordered list size: "+orderedEmployeeList.size()) ;
+		System.out.println(oneLevelUpMapCopy.size() + " was the first level list size. Vs. the ordered list size: "
+				+ orderedEmployeeList.size());
 
+		
+		Employee boss = null;
+		
+		for(int i = orderedEmployeeList.size()-1; i>0 ;i--) {
+			
+			
+//			if(orderedEmployeeList.get(i-1).getList().contains(orderedEmployeeList.get(i))) {
+				for(Employee emp: orderedEmployeeList.get(i-1).getList()) {
+					if(emp.getName().equals(orderedEmployeeList.get(i-1).getName())) {
+//						orderedEmployeeList.get(i-1).getList().add(emp);
+						boss = new Employee(orderedEmployeeList.get(i-1).getName());					
+						boss.getList().add(emp);
+					}
+				}
+//			}else {
+//				System.out.println("missing hierarchy");
+//			}
+				
+				
+		}
+		
+		System.out.println("Final nested Employees:" + boss);
 	}
 
 	private boolean doesSupervisorHaveSupervisor(String supervisor, Map<String, List<String>> filteredMap) {
